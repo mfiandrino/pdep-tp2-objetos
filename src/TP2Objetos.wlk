@@ -8,9 +8,31 @@ object pichca
 
 // Punto 2) Integrante 2
 object mensajeroEstandar
-{
-	method puedeMandar(mensaje) = false // solo para que no me tire el error al ejecutar
-	method costo(mensaje) = 1 // solo para que no me tire el error al ejecutar
+{	
+	var cantPalabras = 0
+	var costoTipoEnvio = 0
+	const tipoEnvio = "VIP"
+	
+	method puedeMandar(mensaje) =	mensaje.size() <= 20
+	method cantidadDePalabras(mensaje) {
+		cantPalabras = mensaje.words().size()
+		return cantPalabras
+	}
+	method costo(mensaje) {
+		return self.costoTipoEnvios() * self.cantidadDePalabras(mensaje)
+	}
+	method costoTipoEnvios() {
+		if (tipoEnvio == "VIP") {
+			costoTipoEnvio = 30
+		}
+		else if (tipoEnvio == "rapido") {
+			costoTipoEnvio = 20
+		}
+		else if (tipoEnvio == "estandar") {
+			costoTipoEnvio = 15
+		}
+		return costoTipoEnvio	
+	}
 }
 
 // Punto 3) Integrante 3 - Modificación del tp1
@@ -31,8 +53,8 @@ object agenciaMensajeria
 		} return mensajeroPosible
 	}
 	method pedirMensajero(mensaje) {
-		var mensajeroSeleccionado = self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})	
-		return mensajeroSeleccionado
+		return self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})	
+		//return 
 		}
 
 }
