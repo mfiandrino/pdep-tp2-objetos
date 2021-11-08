@@ -35,11 +35,42 @@ object mensajeroEstandar
 	}
 }
 
-// Punto 3) Integrante 3 - Modificación del tp1
+// Punto 3) Integrante 3 - Modificación del tp1\
+
+class EntradaHistorial {
+	var mensaje
+	var mensajero
+	var costo
+	var fecha
+	
+	method gananciaPorMensaje(){
+		if(mensaje.size() < 30){
+			return (500 - mensajero.costo(mensaje))
+			} else {
+				return 900 - mensajero.costo(mensaje)
+			}
+	}
+	method mensajeEnviado() = mensaje
+	method mensajero() = mensajero
+	method costo() = costo
+	method fecha() = fecha
+	
+	
+}
+
+const hoy = new Date() /* (Segun documentación Wollok) Una fecha es un objeto inmutable que representa un día, 
+ 						mes y año (sin horas ni minutos). Se crean de dos maneras posibles:
+						const hoy = new Date()  
+        				toma la fecha del día
+`						const unDiaCualquiera = new Date(day = 30, month = 6, year = 1973)  
+        				se ingresa en formato día, mes y año */
 
 object agenciaMensajeria
 {
 	const mensajeros = [pichca, mensajeroEstandar]
+	var historial = []
+	
+	method historial() = historial
 	
 	method verificarMensaje(mensaje){
 		if(mensaje.isEmpty()) {
@@ -53,11 +84,27 @@ object agenciaMensajeria
 		} return mensajeroPosible
 	}
 	method pedirMensajero(mensaje) {
-		return self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})	
-		//return 
+		var mensajeroElegido = self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})	
+		historial.add(new EntradaHistorial(mensaje = mensaje, mensajero = mensajeroElegido, fecha = new Date(), costo = mensajeroElegido.costo(mensaje)))
+		return mensajeroElegido
 		}
+		
+// 4) Ganancia neta del mes - Común
 
-}
+	method historialDelMes() = historial.filter{input => input.fecha() >= hoy.minusDays(30)}
+	
+	method GananciaNetaXMes() = self.historialDelMes().sum{input => input.gananciaPorMensaje()}
+	
+// 5) Empleado del mes - Común
+	method obtenerEmpleadoDelMes(){
+		const historialFiltrado = self.historialDelMes()
+		const losMensajerosQueEnviaron = historialFiltrado.map{input => input.mensajero()}
+		return losMensajerosQueEnviaron.max{mensajero => losMensajerosQueEnviaron.occurrencesOf(mensajero)} // Counts the occurrences of a given element in self collection.returns an integer number
+		
+		}
+	}
+
+
 
 
 
