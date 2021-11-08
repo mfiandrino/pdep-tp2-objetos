@@ -1,9 +1,35 @@
 
-describe "group of tests" {
+import TP2Objetos.*
 
-	test "testX" {
 
-		assert.that(true)
+describe "Test" {
 
+	//test "No se puede recibir un mensaje vacío" // No se como testear errores.
+	
+
+	//test "No se debe poder recibir un mensaje que ningun mensajero puede enviar" NO SE COMO TESTEARLO.
+	
+	test "Si todo sale ok, guardar en historial"{
+		assert.equals(agenciaMensajeria.pedirMensajero("hola"),pichca)
+		assert.equals(agenciaMensajeria.historial().get(0).mensajeEnviado(), "hola")
+		assert.equals(agenciaMensajeria.historial().get(0).mensajero(), pichca)
+		assert.equals(agenciaMensajeria.historial().get(0).costo(), 0) //CUANDO SE HAGA EL PUNTO 1 ESTO HAY QUE CAMBIARLOs
+		assert.that(agenciaMensajeria.historial().get(0).fecha() == new Date())
 	}
+	
+	test "La empresa de mensajería calcula la ganancia neta del mes"{
+		agenciaMensajeria.pedirMensajero("hola")
+		assert.equals(agenciaMensajeria.GananciaNetaXMes(), 500)
+	}
+	
+	test "Saber cual es el empleado del mes, es quien envió mas mensajes"{
+		agenciaMensajeria.pedirMensajero("hola")
+		assert.equals(agenciaMensajeria.obtenerEmpleadoDelMes(), pichca)
+	}
+
+
+
+
+	
 }
+
