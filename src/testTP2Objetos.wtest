@@ -28,8 +28,18 @@ describe "Test" {
 	}
 
 
+test "mensaje elocuente con grado de elocuencia 4" {
+	assert.equals(mensajeElocuente.gradoDeElocuencia("un mensaje que es de prueba"),4)
+}
 
-
+test "ganancia de mensaje elocuente de grado 4 es 2000" {
+	assert.equals(mensajeElocuente.ganancia("un mensaje que es de prueba"), 2000)
+}
+test "costo de mensaje elocuente de grado 4 es 2200" {
+	assert.equals(mensajeElocuente.costo("un mensaje que es de prueba"), 2200)
+}
 	
 }
+
+
 

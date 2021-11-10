@@ -148,7 +148,7 @@ object mensajeElocuente{
 			}
 	}
 	method costo(mensaje){
-		return 0.1 * self.ganancia(mensaje)
+		return 1.1 * self.ganancia(mensaje)
 	}
 }
 
