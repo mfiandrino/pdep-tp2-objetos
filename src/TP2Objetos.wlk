@@ -49,103 +49,90 @@ object pichca
 	method costo(mensaje) = mensaje.size() * (3.randomUpTo(7))
 }
 
-// Punto 2) Integrante 2
-object mensajeroEstandar
+class MensajeroEstandar
 {	
-	var cantPalabras = 0
-	var costoTipoEnvio = 0
-	const tipoEnvio = "VIP"
+	var property sector
 	
-	method puedeMandar(mensaje) =	mensaje.size() <= 20
-	method cantidadDePalabras(mensaje) {
-		cantPalabras = mensaje.words().size()
-		return cantPalabras
-	}
-	method costo(mensaje) {
-		return self.costoTipoEnvios() * self.cantidadDePalabras(mensaje)
-	}
-	method costoTipoEnvios() {
-		if (tipoEnvio == "VIP") {
-			costoTipoEnvio = 30
-		}
-		else if (tipoEnvio == "rapido") {
-			costoTipoEnvio = 20
-		}
-		else if (tipoEnvio == "estandar") {
-			costoTipoEnvio = 15
-		}
-		return costoTipoEnvio	
-	}
+	method puedeMandar(mensaje) = mensaje.length() >= 20
+	method costo(mensaje) = self.cantidadDePalabras(mensaje) + sector.cobro()
+	method cantidadDePalabras(mensaje) = mensaje.words().size()
 }
 
-// Punto 3) Integrante 3 - Modificación del tp1\
-
-class EntradaHistorial {
-	var mensaje
-	var mensajero
-	var costo
-	var fecha
-	
-	method gananciaPorMensaje(){
-		if(mensaje.size() < 30){
-			return (500 - mensajero.costo(mensaje))
-			} else {
-				return 900 - mensajero.costo(mensaje)
-			}
-	}
-	method mensajeEnviado() = mensaje
-	method mensajero() = mensajero
-	method costo() = costo
-	method fecha() = fecha
-	
-	
+object enviosRapidos
+{
+	method cobro() = 20
 }
 
-const hoy = new Date() /* (Segun documentación Wollok) Una fecha es un objeto inmutable que representa un día, 
- 						mes y año (sin horas ni minutos). Se crean de dos maneras posibles:
-						const hoy = new Date()  
-        				toma la fecha del día
-`						const unDiaCualquiera = new Date(day = 30, month = 6, year = 1973)  
-        				se ingresa en formato día, mes y año */
+object enviosEstandar
+{
+	method cobro() = 15
+}
+
+object enviosVIP
+{
+	method cobro() = 30
+}
 
 object agenciaMensajeria
 {
-	const mensajeros = [pichca, mensajeroEstandar]
-	var historial = []
+	const mensajeros = [chasqui,sherpa,messich,pali,pichca,new MensajeroEstandar(sector = enviosRapidos)]
+	const property historial = []
 	
-	method historial() = historial
 	
-	method verificarMensaje(mensaje){
-		if(mensaje.isEmpty()) {
-			self.error("No se puede enviar mensajes vacíos")
-		} return true
+	
+	method recibirMensaje(mensaje)
+	{
+		self.verificarMensajeVacio(mensaje)
+		self.registrarEntrada(mensaje,self.pedirMensajero(mensaje),new Date())
 	}
-	method mensajerosPosibles(mensaje){
-	const mensajeroPosible = mensajeros.filter({unMensajero => unMensajero.puedeMandar(mensaje)})
-	if(mensajeroPosible.isEmpty()){
-		self.error("No existen mensajeros que puedan enviar este mensaje")
-		} return mensajeroPosible
+	
+	method verificarMensajeVacio(mensaje)
+	{
+		if(mensaje.isEmpty())
+			throw new DomainException(message = "El mensaje esta vacio, no puede realizarse la operacion")
 	}
-	method pedirMensajero(mensaje) {
-		var mensajeroElegido = self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})	
-		historial.add(new EntradaHistorial(mensaje = mensaje, mensajero = mensajeroElegido, fecha = new Date(), costo = mensajeroElegido.costo(mensaje)))
-		return mensajeroElegido
-		}
+	
+	method mensajerosPosibles(mensaje)
+	{
+		const mensajerosPosibles = mensajeros.filter({unMensajero => unMensajero.puedeMandar(mensaje)})
+		if(mensajerosPosibles.isEmpty())
+			throw new DomainException(message = "No hay mensajeros para enviar ese mensaje")
+		return mensajerosPosibles
+	}
+	
+	method pedirMensajero(mensaje) = self.mensajerosPosibles(mensaje).min({unMensajero => unMensajero.costo(mensaje)})
+	
+	method registrarEntrada(mensaje,mensajero,fecha)
+	{
+		historial.add(new EntradaHistorial(mensaje = mensaje, mensajero = mensajero, fecha = fecha))
+	}
 		
 // 4) Ganancia neta del mes - Común
-
-	method historialDelMes() = historial.filter{input => input.fecha() >= hoy.minusDays(30)}
-	
-	method GananciaNetaXMes() = self.historialDelMes().sum{input => input.gananciaPorMensaje()}
+	method historialDelMes() = historial.filter({input => input.fecha() >= new Date().minusDays(30)})
+	method GananciaNetaXMes() = self.historialDelMes().sum({input => input.gananciaPorMensaje()})
 	
 // 5) Empleado del mes - Común
-	method obtenerEmpleadoDelMes(){
-		const historialFiltrado = self.historialDelMes()
-		const losMensajerosQueEnviaron = historialFiltrado.map{input => input.mensajero()}
-		return losMensajerosQueEnviaron.max{mensajero => losMensajerosQueEnviaron.occurrencesOf(mensajero)} // Counts the occurrences of a given element in self collection.returns an integer number
-		
-		}
+	method obtenerEmpleadoDelMes()
+	{
+		const losMensajerosQueEnviaron = self.historialDelMes().map({input => input.mensajero()})
+		return losMensajerosQueEnviaron.max({mensajero => losMensajerosQueEnviaron.occurrencesOf(mensajero)})
 	}
+}
+
+class EntradaHistorial 
+{
+	var property mensaje
+	var property mensajero
+	var property fecha
+	
+	method gananciaPorMensaje()
+	{
+		if(mensaje.size() < 30)
+			return 500 - mensajero.costo(mensaje)
+		else
+			return 900 - mensajero.costo(mensaje)
+	}
+}
 
 
 //Punto 8:
