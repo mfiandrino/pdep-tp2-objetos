@@ -1,9 +1,52 @@
+class Mensajero
+{
+	var property sector
+	method puedeMandar(mensaje) = mensaje.length() >= 20
+}
 
-// Punto 1) Integrante 1
+object chasqui
+{
+	method puedeMandar(mensaje) = mensaje.length() < 50
+	method costo(mensaje) = mensaje.length() * 2
+}
+
+object sherpa
+{
+	var property valorMensaje = 60
+
+	method puedeMandar(mensaje) = mensaje.length().even()
+	method costo(mensaje) = valorMensaje
+}
+
+object messich
+{
+	var property valorCosto = 10
+	
+	method puedeMandar(mensaje) = not mensaje.startsWith('a') //Otra opción podría ser mensaje.take(1) != 'a' 
+	method costo(mensaje) = valorCosto * mensaje.words().size()
+}
+
+object pali
+{
+	method puedeMandar(mensaje) = self.esPalindromo(mensaje)
+	
+	method esPalindromo(mensaje)
+	{
+		const mensajeSinEspacios = mensaje.words().join("")
+		return mensajeSinEspacios.equalsIgnoreCase(mensajeSinEspacios.reverse())
+	}
+	
+	method costo(mensaje)
+	{
+		const costo = mensaje.length() * 4
+		return costo.min(80)
+	} 
+}
+
 object pichca
 {
-	method puedeMandar(mensaje) = mensaje.size() > 2 // solo para testear el punto 3
-	method costo(mensaje) = 0 // solo para que no me tire el error al ejecutar
+	method puedeMandar(mensaje) = mensaje.words().size() > 3
+	method costo(mensaje) = mensaje.size() * (3.randomUpTo(7))
 }
 
 // Punto 2) Integrante 2
