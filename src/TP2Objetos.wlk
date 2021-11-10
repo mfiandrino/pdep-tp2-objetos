@@ -105,7 +105,22 @@ object agenciaMensajeria
 	}
 
 
-
+//Punto 8:
+object mensajeElocuente{
+	method gradoDeElocuencia(mensaje){
+	return	mensaje.words().filter({palabra => palabra.size() < 3 }).size() +1
+	}
+	method ganancia(mensaje){
+		if(mensaje.size() < 30){
+			return 500 * self.gradoDeElocuencia(mensaje)
+			} else {
+				return 900 * self.gradoDeElocuencia(mensaje)
+			}
+	}
+	method costo(mensaje){
+		return 0.1 * self.ganancia(mensaje)
+	}
+}
 
 
 //Punto 9:
