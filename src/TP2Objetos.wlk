@@ -1,34 +1,36 @@
 class Mensajero
 {
-	var property sector
-	method puedeMandar(mensaje) = mensaje.length() >= 20
+	var property sector = enviosRapidos
+	method cumpleCondicionesParaMandar(mensaje) = mensaje.length() >= 20 && self.puedeMandar(mensaje)
+
+	method puedeMandar(mensaje)
 }
 
-object chasqui
+object chasqui inherits Mensajero
 {
-	method puedeMandar(mensaje) = mensaje.length() < 50
+	override method puedeMandar(mensaje) = mensaje.length() < 50
 	method costo(mensaje) = mensaje.length() * 2
 }
 
-object sherpa
+object sherpa inherits Mensajero
 {
 	var property valorMensaje = 60
 
-	method puedeMandar(mensaje) = mensaje.length().even()
+	override method puedeMandar(mensaje) = mensaje.length().even()
 	method costo(mensaje) = valorMensaje
 }
 
-object messich
+object messich inherits Mensajero
 {
 	var property valorCosto = 10
 	
-	method puedeMandar(mensaje) = not mensaje.startsWith('a') //Otra opción podría ser mensaje.take(1) != 'a' 
+	override method puedeMandar(mensaje) = not mensaje.startsWith('a') //Otra opción podría ser mensaje.take(1) != 'a' 
 	method costo(mensaje) = valorCosto * mensaje.words().size()
 }
 
-object pali
+object pali inherits Mensajero
 {
-	method puedeMandar(mensaje) = self.esPalindromo(mensaje)
+	override method puedeMandar(mensaje) = self.esPalindromo(mensaje)
 	
 	method esPalindromo(mensaje)
 	{
@@ -43,17 +45,15 @@ object pali
 	} 
 }
 
-object pichca
+object pichca inherits Mensajero
 {
-	method puedeMandar(mensaje) = mensaje.words().size() > 3
+	override method puedeMandar(mensaje) = mensaje.words().size() > 3
 	method costo(mensaje) = mensaje.size() * (3.randomUpTo(7))
 }
 
-class MensajeroEstandar
+class MensajeroEstandar inherits Mensajero
 {	
-	var property sector
-	
-	method puedeMandar(mensaje) = mensaje.length() >= 20
+	override method puedeMandar(mensaje) = mensaje.length() >= 20
 	method costo(mensaje) = self.cantidadDePalabras(mensaje) + sector.cobro()
 	method cantidadDePalabras(mensaje) = mensaje.words().size()
 }
