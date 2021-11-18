@@ -1,45 +1,176 @@
-
 import TP2Objetos.*
 
-/*
-describe "Test" {
-
-	//test "No se puede recibir un mensaje vacío" // No se como testear errores.
-	
-
-	//test "No se debe poder recibir un mensaje que ningun mensajero puede enviar" NO SE COMO TESTEARLO.
-	 
-	test "Si todo sale ok, guardar en historial"{
-		assert.equals(agenciaMensajeria.pedirMensajero("hola"),pichca)
-		assert.equals(agenciaMensajeria.historial().get(0).mensajeEnviado(), "hola")
-		assert.equals(agenciaMensajeria.historial().get(0).mensajero(), pichca)
-		assert.equals(agenciaMensajeria.historial().get(0).costo(), 0) //CUANDO SE HAGA EL PUNTO 1 ESTO HAY QUE CAMBIARLOs
-		assert.that(agenciaMensajeria.historial().get(0).fecha() == new Date())
+describe "Punto 1 - Pichca"
+{
+	test "Prueba de numeros aleatorios" // No encontre la forma de testearlo de manera automatizada
+	{
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
+		assert.that((3.randomUpTo(7)).between(3,7))
 	}
 	
-	test "La empresa de mensajería calcula la ganancia neta del mes"{
-		agenciaMensajeria.pedirMensajero("hola")
-		assert.equals(agenciaMensajeria.GananciaNetaXMes(), 500)
+	test "Pichca puede enviar mensajes que tengan mas de 3 palabras (simepre y cuando tengan mas 20 caracteres por el punto 6)"
+	{
+		assert.that(pichca.puedeMandar("Podre enviar este mensaje?"))
 	}
 	
-	test "Saber cual es el empleado del mes, es quien envió mas mensajes"{
-		agenciaMensajeria.pedirMensajero("hola")
-		assert.equals(agenciaMensajeria.obtenerEmpleadoDelMes(), pichca)
+	test "Pichca no puede enviar mensajes que tengan 3 palabras o menos (aunque tengan mas 20 caracteres por el punto 6)"
+	{
+		assert.notThat(pichca.puedeMandar("Usualmente practico programacion"))
 	}
-
-
-test "mensaje elocuente con grado de elocuencia 4" {
-	assert.equals(mensajeElocuente.gradoDeElocuencia("un mensaje que es de prueba"),4)
 }
 
-test "ganancia de mensaje elocuente de grado 4 es 2000" {
-	assert.equals(mensajeElocuente.ganancia("un mensaje que es de prueba"), 2000)
-}
-test "costo de mensaje elocuente de grado 4 es 2200" {
-	assert.equals(mensajeElocuente.costo("un mensaje que es de prueba"), 2200)
-}
+describe "Punto 2 - Mensajer@ estandar"
+{	
+	const pepe = new MensajeroEstandar(sector=enviosEstandar, tipoDeMensajero = new Serio())
+	test "Un mensajero estandar puede enviar mensajes que tengan al menos 20 caracteres"
+	{
+		assert.that(pepe.puedeMandar("Queremos avisarle que su paquete ya se encuentra disponible en nuestra sucursal"))
+	}
 	
-}*/
+	test "Un mensajer@ estandar no puede enviar mensajes que tengan menos de 20 caracteres"
+	{
+		assert.notThat(pepe.puedeMandar("Estimado cliente"))
+	}
+	
+	test "Costo de mensaje de un mensajer@ estandar"
+	{
+		assert.equals(pepe.costo("Buenos dias, queremos comunicarnos con usted"),90)
+	}
+}
+
+describe "Punto 3 - Recibir Mensaje"
+{	
+	
+	test "Si un mensaje recibido por la empresa de mensajeria es vacio, se debera arrojar una excepcion"
+	{
+		assert.throwsException({agenciaMensajeria.recibirMensaje("")})
+	}
+	
+	test "Al recibir un mensaje, la agencia de mensajeria debe elegir a aquel mensajero que pueda y sea menos costoso"
+	{
+		assert.equals(agenciaMensajeria.pedirMensajero("Este es un comunicado de la agencia de mensajeria"),messich)
+	}
+	
+	test "Si no hay ningun mensajero capaz de enviar el mensaje, se debera arrojar una excepcion (por ejemplo, un mensaje de menos de 20 caracteres por el punto 6)"
+	{
+		assert.throwsException({agenciaMensajeria.recibirMensaje("Hola buenos dias")})
+	}
+	
+	test "Si al recibir un mensaje se pasan las validaciones correctamente, se registra en el historial"
+	{
+		agenciaMensajeria.recibirMensaje("Este es un mensaje de prueba")
+		agenciaMensajeria.recibirMensaje("Este es otro mensaje de prueba")
+		agenciaMensajeria.recibirMensaje("Este es otro mensaje mas de prueba")
+		agenciaMensajeria.recibirMensaje("Este es el ultimo mensaje de prueba")
+		assert.equals(agenciaMensajeria.historial().size(),4)
+	}
+}
+
+describe "Punto 4 - Ganancia Neta del mes y Punto 5 - Chasqui quilla"
+{	
+	const juan = new MensajeroEstandar(sector = enviosVIP, tipoDeMensajero = paranoico)
+	
+	method initialize()
+	{
+		agenciaMensajeria.recibirMensaje("Este es un mensaje de prueba")
+		agenciaMensajeria.recibirMensaje("Este es otro mensaje de prueba")
+		agenciaMensajeria.recibirMensaje("Este es otro mensaje mas de prueba")
+		agenciaMensajeria.recibirMensaje("Este es el ultimo mensaje de prueba")
+	}
+	
+	test "Ganancia neta del mes de la agencia de mensajeria"
+	{
+		assert.equals(agenciaMensajeria.gananciaNetaDelMes(),2846)
+	}
+	
+	test "Empleado del mes de la agencia de mensajeria"
+	{
+		assert.equals(agenciaMensajeria.obtenerEmpleadoDelMes(),chasqui)
+	}
+}
+
+describe "Punto 6 - Cambios en los chasquis"
+{	
+	const pedro = new MensajeroEstandar(sector = enviosVIP, tipoDeMensajero = paranoico)
+	
+	test "Los mensajeros no pueden enviar mensajes con menos de 20 caracteres, pero manteniendo las restricciones anteriores"
+	{
+		assert.that(pedro.puedeMandar("01234567890123456789"))
+		assert.notThat(pedro.puedeMandar("0123456789012345678"))
+		assert.that(chasqui.puedeMandar("01234567890123456789")) //Como restriccion anterior Chasqui solo puede enviar mensajes menores a 50 caracteres
+		assert.notThat(chasqui.puedeMandar("0123456789012345678")) //Como restriccion anterior Chasqui solo puede enviar mensajes menores a 50 caracteres
+		assert.that(sherpa.puedeMandar("01234567890123456789")) //Como restriccion anterior Sherpa solo puede enviar mensajes pares
+		assert.notThat(sherpa.puedeMandar("012345678901234567")) //Como restriccion anterior Sherpa solo puede enviar mensajes pares
+	}
+}
+
+describe "Punto 7 - Mensajes Cantados"
+{	
+	const registro = new EntradaHistorial(mensajeH = new MensajeCantado(contenido = "Este es un mensaje de prueba", duracion = 4), mensajeroH = chasqui)
+	
+	test "Ganancia de un mensaje cantado"
+	{
+		assert.equals(registro.mensajeH().ganancia(),500)
+	}
+	
+	test "Costo de un mensaje cantado"
+	{
+		assert.equals(registro.mensajeH().costo(registro.mensajeroH()),5.6)	
+	}
+}
+
+describe "Punto 8 - Mensajes Elocuentes"
+{	
+	const registro = new EntradaHistorial(mensajeH = new MensajeElocuente(contenido = "Este es un mensaje de prueba"), mensajeroH = chasqui)
+	
+	test "Ganancia de un mensaje elocuente"
+	{
+		assert.equals(registro.mensajeH().ganancia(),2000)
+	}
+	
+	test "Costo de un mensaje elocuente"
+	{
+		assert.equals(registro.mensajeH().costo(registro.mensajeroH()),56)	
+	}
+	
+	test "Grado de elocuencia de un mensaje elocuente" 
+	{
+		assert.equals(registro.mensajeH().gradoDeElocuencia(),4)
+	}
+}
+
+describe "Punto 9 - Mensajes Cifrados"
+{	
+	const registro = new EntradaHistorial(mensajeH = new MensajeCifrado(contenido = "Este es un mensaje de prueba"), mensajeroH = chasqui)
+	
+	test "Ganancia de un mensaje cifrado"
+	{
+		assert.equals(registro.mensajeH().ganancia(),500)
+	}
+	
+	test "Costo de un mensaje cifrado"
+	{
+		assert.equals(registro.mensajeH().costo(registro.mensajeroH()),101)	
+	}
+}
+
+describe "Punto 10 - Creando un mensaje"
+{	
+	/*
+	No se como verificar de qué clase es el mensaje para ver, segun que tipo de mensajero es, que tipo de mensaje envia.
+	En Java existe un metodo "getClass()", pero en wollok no lo reconoce
+	*/
+}
+
+
 
 
 

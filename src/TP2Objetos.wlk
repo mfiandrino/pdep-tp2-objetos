@@ -56,7 +56,7 @@ object pichca inherits Mensajero(sector = enviosEstandar, tipoDeMensajero = new 
 
 class MensajeroEstandar inherits Mensajero
 {	
-	override method costo(mensaje) = self.cantidadDePalabras(mensaje) + sector.cobro()
+	override method costo(mensaje) = self.cantidadDePalabras(mensaje) * sector.cobro()
 }
 
 class Sector
@@ -110,8 +110,8 @@ class Serio
 
 object agenciaMensajeria
 {
-	const historial = []
-	const mensajeros = [chasqui,sherpa,messich,pali]
+	const property historial = []
+	const mensajeros = [chasqui,sherpa,messich,pali, new MensajeroEstandar(sector=enviosEstandar, tipoDeMensajero = new Serio())]
 	
 	method recibirMensaje(mensaje)
 	{
@@ -142,7 +142,7 @@ object agenciaMensajeria
 
 	// 4) Ganancia neta del mes - Común
 	method historialDelMes() = historial.filter({input => input.fechaH() >= new Date().minusDays(30)})
-	method GananciaNetaXMes() = self.historialDelMes().sum({input => input.gananciaPorMensaje()})
+	method gananciaNetaDelMes() = self.historialDelMes().sum({input => input.gananciaPorMensaje()})
 	
 	// 5) Empleado del mes - Común
 	method obtenerEmpleadoDelMes()
@@ -158,7 +158,7 @@ class EntradaHistorial
 	var property mensajeroH
 	var property fechaH = new Date()
 
-	method gananciaPorMensaje() = mensajeH.ganancia() - mensajeH.costo()
+	method gananciaPorMensaje() = mensajeH.ganancia() - mensajeH.costo(mensajeroH)
 }
 
 class Mensaje
